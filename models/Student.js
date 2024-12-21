@@ -14,13 +14,19 @@ class StudentBST {
     }
 
     addStudent(id, name, score) {
+      
+        if (this._searchById(this.root, id)) {
+            return false; 
+        }
+
         const newNode = new StudentNode(id, name, score);
         if (!this.root) {
             this.root = newNode;
         } else {
             this._insertNode(this.root, newNode);
         }
-    }
+        return true; 
+    }
 
     _insertNode(node, newNode) {
         if (newNode.score < node.score) {
@@ -57,6 +63,11 @@ class StudentBST {
         }
         return students;
     }
+    _searchById(node, id) {
+        if (!node) return false;
+        if (id === node.id) return true;
+        return this._searchById(node.left, id) || this._searchById(node.right, id);
+    }
 }
 
 module.exports = new StudentBST();
