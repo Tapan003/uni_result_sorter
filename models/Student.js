@@ -68,6 +68,20 @@ class StudentBST {
         if (id === node.id) return true;
         return this._searchById(node.left, id) || this._searchById(node.right, id);
     }
+    searchStudentById(id) {
+      return this._searchNodeById(this.root, id);
+    }
+
+    _searchNodeById(node, id) {
+       if (!node) return null;
+        if (id === node.id) return node;
+
+    
+     const leftSearch = this._searchNodeById(node.left, id);
+        if (leftSearch) return leftSearch;
+
+        return this._searchNodeById(node.right, id);
+    }
 }
 
 module.exports = new StudentBST();

@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.post('/add', addStudent);
 router.get('/sorted', getSortedStudents);
-router.get('/search/:score', searchStudent);
+
+router.get('/search/:type/:value', searchStudent);
+
 
 module.exports = router;

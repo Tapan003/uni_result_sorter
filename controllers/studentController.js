@@ -22,28 +22,30 @@ const addStudent = (req, res) => {
 };
 
 const getSortedStudents = (req, res) => {
-    const sortedStudents = studentBST.inOrderTraversal();
-    res.status(200).json(sortedStudents.map((s, index) => ({
+    const sortedStudents = studentBST.inOrderTraversal().reverse();
+
+    const dataToWrite = sortedStudents.map((s, index) => ({
         rank: index + 1,
         id: s.id,
         name: s.name,
         score: s.score,
-    })));
-    const fileContent = JSON.stringify(dataToWrite, null, 2);
+    }));
 
-    // Define the file path
-    const filePath = path.join(__studentController.js, '..', 'sorted_students.json');
+    // const dirPath = path.join(studentController.js, '..', 'output.json');
+    // if (!fs.existsSync(dirPath)) {
+    //     fs.mkdirSync(dirPath); 
+    // }
+    // const filePath = path.join(dirPath, 'output.json');
 
-    // Write the sorted data to the file
-    fs.writeFile(filePath, fileContent, (err) => {
+    fs.writeFile('university-result-system\controllers\sorted_students.json', JSON.stringify(dataToWrite, null, 2), (err) => {
         if (err) {
             console.error('Error writing to file:', err);
             return res.status(500).json({ message: 'Failed to save sorted data to file.' });
         }
 
-        // Respond with the sorted data
         res.status(200).json({
             message: 'Sorted data successfully saved to file.',
+            filePath: 'university-result-system\controllers\sorted_students.json', 
             sortedStudents: dataToWrite,
         });
     });
@@ -53,18 +55,35 @@ const getSortedStudents = (req, res) => {
 
 
 const searchStudent = (req, res) => {
-    const { score } = req.params;
-    const student = studentBST.searchStudent(Number(score));
-    if (student) {
-        res.status(200).json({
-            id: student.id,
-            name: student.name,
-            score: student.score,
-        });
+    const { type, value } = req.params;
+
+    if (type === 'score') {
+        const student = studentBST.searchStudent(Number(value));
+        if (student) {
+            res.status(200).json({
+                id: student.id,
+                name: student.name,
+                score: student.score,
+            });
+        } else {
+            res.status(404).json({ message: "Student not found by score!" });
+        }
+    } else if (type === 'id') {
+        const student = studentBST.searchStudentById(Number(value));
+        if (student) {
+            res.status(200).json({
+                id: student.id,
+                name: student.name,
+                score: student.score,
+            });
+        } else {
+            res.status(404).json({ message: "Student not found by ID!" });
+        }
     } else {
-        res.status(404).json({ message: "Student not found!" });
+        res.status(400).json({ message: "Invalid search type. Use 'id' or 'score'." });
     }
 };
+
 
 module.exports = {
     addStudent,
